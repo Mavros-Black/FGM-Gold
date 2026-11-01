@@ -26,6 +26,9 @@ export function SiteHeader() {
         </Link>
         <nav className={open ? "nav-links is-open" : "nav-links"}>
           {links.map(link => <Link key={link.href} href={link.href} onClick={() => setOpen(false)}>{link.label}</Link>)}
+          <button className="nav-cta nav-cta-mobile" onClick={() => { setOpen(false); setModalOpen(true); }}>
+            Get in touch <ArrowUpRight size={15} />
+          </button>
         </nav>
         <div className="nav-actions">
           <button className="nav-cta" onClick={() => { setOpen(false); setModalOpen(true); }}>

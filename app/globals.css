@@ -391,3 +391,8 @@ a,button{cursor:pointer}
   .nav-links{gap:14px}
   .nav-cta{padding:10px 14px;font-size:10px}
 }
+.nav-cta-mobile{display:none}
+@media(max-width:650px){
+  .nav-actions .nav-cta{display:none}
+  .nav-links .nav-cta-mobile{display:inline-flex;justify-content:center;margin-top:12px}
+}
