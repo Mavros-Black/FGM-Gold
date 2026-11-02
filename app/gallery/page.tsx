@@ -1,6 +1,16 @@
 import { SectionHeading } from "@/components/section-heading";
 import { GalleryGrid, type GalleryImage } from "@/components/gallery-grid";
 
+const featured: GalleryImage[] = Array.from({ length: 5 }, (_, i) => {
+  const file = `media-${String(i + 1).padStart(2, "0")}.jpeg`;
+  return {
+    src: `/gallery/${file}`,
+    alt: `FGM Resources Ghana site photograph ${i + 1}`,
+    caption: "Field operations",
+    tag: "Field gallery",
+  };
+});
+
 const curated: GalleryImage[] = [
   { src: "/gallery/drill-rig.jpeg", alt: "Exploration drill rig set up at a site in the forest", caption: "Exploration drilling", tag: "Exploration" },
   { src: "/gallery/wheel-loader.jpeg", alt: "Wheel loader moving material on site", caption: "Material handling", tag: "Operations" },
@@ -26,7 +36,7 @@ const fieldImages: GalleryImage[] = Array.from({ length: 61 }, (_, i) => {
   };
 });
 
-const images: GalleryImage[] = [...curated, ...fieldImages];
+const images: GalleryImage[] = [...featured, ...curated, ...fieldImages];
 
 export default function Gallery() {
   return <>

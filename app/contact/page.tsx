@@ -1,5 +1,6 @@
 import { SectionHeading } from "@/components/section-heading";
 import { Mail, MapPin, Phone, Clock, ArrowUpRight } from "lucide-react";
+import { WhatsAppIcon } from "@/components/whatsapp-icon";
 import { ContactForm } from "@/components/contact-form";
 
 const mapCoords = "5.65973,-0.16774";
@@ -13,7 +14,7 @@ export default function Contact() {
       <div className="contact-details">
         <SectionHeading eyebrow="GET IN TOUCH" title="We'd be pleased to hear from you." text="For business enquiries, partnerships and further information, please contact our team."/>
         <div className="contact-grid">
-          <div className="contact-item"><Phone/><div><strong>Telephone</strong><a href="tel:+233201749300">+233 20 174 9300</a><a href="tel:+2335454240">+233 5454240</a></div></div>
+          <div className="contact-item"><Phone/><div><strong>Telephone</strong><a href="tel:+233201749300">+233 20 174 9300</a><a href="tel:+2335454240"><WhatsAppIcon size={15} style={{ verticalAlign: "middle", marginRight: 5, color: "#a17a37" }}/> +233 5454240</a></div></div>
           <div className="contact-item"><Mail/><div><strong>Email</strong><a href="mailto:smarizini@gmail.com">smarizini@gmail.com</a></div></div>
           <div className="contact-item"><MapPin/><div><strong>Head office</strong><p>16 Netflix Street, Madina Estate<br/>Off IPS Road, East Legon<br/>Accra, Ghana</p></div></div>
           <div className="contact-item"><Clock/><div><strong>Office hours</strong><p>Monday – Friday<br/>8:00 AM – 5:00 PM (GMT)</p><small>Demo hours — confirm before publication.</small></div></div>
