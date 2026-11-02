@@ -13,7 +13,7 @@ export default function Home() {
     <section className="hero">
       <div className="hero-shade"/>
       <div className="container hero-content">
-        <span className="eyebrow gold">FGM GOLD MINING LIMITED</span>
+        <span className="eyebrow gold" style={{ textTransform: "none" }}>FGM Resources Ghana Limited</span>
         <h1>Building Value.<br/><em>Unearthing Potential.</em></h1>
         <p>A new generation of gold exploration and mining, driven by geological excellence, operational discipline, and responsible development.</p>
         <div className="button-row"><Link className="button button-gold" href="/projects">Explore Our Projects <ArrowUpRight size={17}/></Link><Link className="button button-outline" href="/about">About FGM</Link></div>
