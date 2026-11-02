@@ -20,9 +20,9 @@ export function SiteHeader() {
     <>
     <header className="site-header">
       <div className="nav-wrap container">
-        <Link href="/" className="brand" aria-label="FGM Gold Mining Limited home">
+        <Link href="/" className="brand" aria-label="FGM Resources Ghana Limited home">
           <span className="brand-mark">⋀⋀</span>
-          <span className="brand-copy"><strong>FGM</strong><small>GOLD MINING LIMITED</small></span>
+          <span className="brand-copy"><strong>FGM</strong><small>RESOURCES GHANA COMPANY</small></span>
         </Link>
         <nav className={open ? "nav-links is-open" : "nav-links"}>
           {links.map(link => <Link key={link.href} href={link.href} onClick={() => setOpen(false)}>{link.label}</Link>)}

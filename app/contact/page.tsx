@@ -19,7 +19,7 @@ export default function Contact() {
           <div className="contact-item"><Clock/><div><strong>Office hours</strong><p>Monday – Friday<br/>8:00 AM – 5:00 PM (GMT)</p><small>Demo hours — confirm before publication.</small></div></div>
         </div>
         <div className="contact-map">
-          <iframe src={mapEmbed} title="FGM Gold Mining Limited head office location" loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen/>
+          <iframe src={mapEmbed} title="FGM Resources Ghana Limited head office location" loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen/>
         </div>
         <a className="contact-map-link" href={mapLink} target="_blank" rel="noreferrer">Open in Google Maps <ArrowUpRight size={15}/></a>
       </div>

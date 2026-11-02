@@ -1,4 +1,4 @@
-# FGM Gold Mining Limited — Demo Website
+# FGM Resources Ghana Limited — Demo Website
 
 A responsive five-page corporate website built with Next.js, React, TypeScript and custom CSS.
 

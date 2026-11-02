@@ -20,7 +20,7 @@ const fieldImages: GalleryImage[] = Array.from({ length: 61 }, (_, i) => {
   const file = `fgm-${String(i + 1).padStart(2, "0")}.jpeg`;
   return {
     src: `/gallery/${file}`,
-    alt: `FGM Gold Mining field photograph ${i + 1}`,
+    alt: `FGM Resources field photograph ${i + 1}`,
     caption: "Field operations",
     tag: "Field gallery",
   };

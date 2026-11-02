@@ -31,7 +31,7 @@ export default function Home() {
 
     <section className="section container about-preview">
       <div className="about-image image-frame"><img src="/images/geology-team.jpg" alt="Mining and geology professionals reviewing project information" /></div>
-      <div className="about-copy"><SectionHeading eyebrow="ABOUT FGM" title="Driven by geology. Defined by integrity." text="FGM Gold Mining Limited is a gold exploration and mining company focused on unlocking mineral potential and creating enduring value."/><p>Our approach is grounded in geological evidence, responsible planning and transparent communication.</p><Link className="text-link" href="/about">Learn More <ArrowRight size={16}/></Link></div>
+      <div className="about-copy"><SectionHeading eyebrow="ABOUT FGM" title="Driven by geology. Defined by integrity." text="FGM Resources Ghana Limited is a gold exploration and mining company focused on unlocking mineral potential and creating enduring value."/><p>Our approach is grounded in geological evidence, responsible planning and transparent communication.</p><Link className="text-link" href="/about">Learn More <ArrowRight size={16}/></Link></div>
     </section>
 
     <section className="principles-band"><div className="container"><SectionHeading eyebrow="OUR CORE PRINCIPLES" title="Our Core Principles" text="Safety first. Operational excellence. Transparency. Sustainable growth." light/><div className="principle-grid">
