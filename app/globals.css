@@ -396,3 +396,8 @@ a,button{cursor:pointer}
   .nav-actions .nav-cta{display:none}
   .nav-links .nav-cta-mobile{display:inline-flex;justify-content:center;margin-top:12px}
 }
+
+/* Contact form submission states */
+.contact-form button:disabled{opacity:.65;cursor:not-allowed;transform:none}
+.contact-form .form-note{margin:14px 0 0}
+.contact-form .form-note[role="alert"]{color:#a12d2d}
