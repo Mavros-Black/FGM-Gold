@@ -1,4 +1,5 @@
 import { promises as fs } from "fs";
+import os from "os";
 import path from "path";
 import {
   galleryItems as seedGallery,
@@ -25,10 +26,54 @@ type Store = {
   users: AdminUser[];
 };
 
-const STORE_DIR = path.join(process.cwd(), "data");
+const STORE_DIR = process.env.CONTENT_STORE_DIR
+  ? path.resolve(process.env.CONTENT_STORE_DIR)
+  : process.env.VERCEL
+    ? path.join(os.tmpdir(), "fgm-content")
+    : path.join(process.cwd(), "data");
 const STORE_FILE = path.join(STORE_DIR, "store.json");
 
+const KV_URL = (
+  process.env.KV_REST_API_URL ||
+  process.env.UPSTASH_REDIS_REST_URL ||
+  ""
+).replace(/\/$/, "");
+const KV_TOKEN =
+  process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || "";
+const KV_KEY = "fgm:cms:store";
+const kvEnabled = Boolean(KV_URL && KV_TOKEN);
+
 let queue: Promise<unknown> = Promise.resolve();
+let memoryStore: Store | null = null;
+
+async function kvCommand(command: (string | number)[]) {
+  const response = await fetch(KV_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${KV_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(command),
+    cache: "no-store",
+  });
+
+  if (!response.ok) throw new Error(`KV request failed (${response.status})`);
+
+  const payload = (await response.json()) as { result?: unknown; error?: string };
+  if (payload.error) throw new Error(payload.error);
+  return payload.result;
+}
+
+function normalizeStore(parsed: Partial<Store>, seed: Store): Store {
+  return {
+    posts: parsed.posts ?? seed.posts,
+    pages: parsed.pages ?? seed.pages,
+    media: parsed.media ?? seed.media,
+    gallery: parsed.gallery ?? seed.gallery,
+    messages: parsed.messages ?? seed.messages,
+    users: parsed.users ?? seed.users,
+  };
+}
 
 function enqueue<T>(task: () => Promise<T>): Promise<T> {
   const run = queue.then(task, task);
@@ -51,30 +96,56 @@ function seedStore(): Store {
 }
 
 async function writeStore(store: Store) {
-  await fs.mkdir(STORE_DIR, { recursive: true });
-  const temp = `${STORE_FILE}.${process.pid}.tmp`;
-  await fs.writeFile(temp, JSON.stringify(store, null, 2), "utf8");
-  await fs.rename(temp, STORE_FILE);
+  memoryStore = store;
+
+  if (kvEnabled) {
+    try {
+      await kvCommand(["SET", KV_KEY, JSON.stringify(store)]);
+      return;
+    } catch {
+      // Fall through to the local file so the app keeps working.
+    }
+  }
+
+  try {
+    await fs.mkdir(STORE_DIR, { recursive: true });
+    const temp = `${STORE_FILE}.${process.pid}.tmp`;
+    await fs.writeFile(temp, JSON.stringify(store, null, 2), "utf8");
+    await fs.rename(temp, STORE_FILE);
+  } catch {
+    // Read-only or ephemeral hosts: keep working from process memory.
+  }
 }
 
 async function readStore(): Promise<Store> {
+  if (!kvEnabled && memoryStore) return memoryStore;
+
+  const seed = seedStore();
+
+  if (kvEnabled) {
+    try {
+      const raw = await kvCommand(["GET", KV_KEY]);
+      if (typeof raw === "string" && raw) {
+        memoryStore = normalizeStore(JSON.parse(raw) as Partial<Store>, seed);
+        return memoryStore;
+      }
+      memoryStore = seed;
+      await writeStore(seed);
+      return memoryStore;
+    } catch {
+      // Fall through to the local file / memory fallback.
+    }
+  }
+
   try {
     const raw = await fs.readFile(STORE_FILE, "utf8");
-    const parsed = JSON.parse(raw) as Partial<Store>;
-    const seed = seedStore();
-    return {
-      posts: parsed.posts ?? seed.posts,
-      pages: parsed.pages ?? seed.pages,
-      media: parsed.media ?? seed.media,
-      gallery: parsed.gallery ?? seed.gallery,
-      messages: parsed.messages ?? seed.messages,
-      users: parsed.users ?? seed.users,
-    };
+    memoryStore = normalizeStore(JSON.parse(raw) as Partial<Store>, seed);
   } catch {
-    const seed = seedStore();
+    memoryStore = seed;
     await writeStore(seed);
-    return seed;
   }
+
+  return memoryStore;
 }
 
 function mutate<T>(task: (store: Store) => T | Promise<T>): Promise<T> {
