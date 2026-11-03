@@ -1,5 +1,15 @@
 import Link from "next/link";
+import {
+  FileText,
+  Image as ImageIcon,
+  Images,
+  Mail,
+  Pin,
+  Users,
+} from "lucide-react";
 import { quickDraft } from "@/app/admin/actions";
+import { DashboardWidget } from "@/components/admin/dashboard-widget";
+import { WelcomePanel } from "@/components/admin/welcome-panel";
 import {
   getGalleryItems,
   getMedia,
@@ -35,49 +45,92 @@ export default async function AdminHomePage() {
         <h1 className="wp-heading-inline">Dashboard</h1>
       </div>
 
-      <div className="wp-notice is-success">
-        <p>
-          Welcome back. You have <strong>{unread} unread messages</strong> and{" "}
-          <strong>{drafts} draft items</strong> awaiting review.
-        </p>
-      </div>
+      <WelcomePanel unread={unread} drafts={drafts} />
 
-      <div className="dashboard-grid">
-        <section className="wp-widget">
-          <h2>At a Glance</h2>
-          <div className="wp-widget-body">
+      <div className="dashboard-columns">
+        <div className="dashboard-column">
+          <DashboardWidget title="At a Glance">
             <div className="at-glance-grid">
-              <div>
-                <Link href="/admin/posts">{published}</Link>
-                <span>Posts</span>
+              <div className="at-glance-item">
+                <Pin size={18} />
+                <div>
+                  <Link href="/admin/posts">{published}</Link>
+                  <span>Posts</span>
+                </div>
               </div>
-              <div>
-                <Link href="/admin/pages">{pages.length}</Link>
-                <span>Pages</span>
+              <div className="at-glance-item">
+                <FileText size={18} />
+                <div>
+                  <Link href="/admin/pages">{pages.length}</Link>
+                  <span>Pages</span>
+                </div>
               </div>
-              <div>
-                <Link href="/admin/media">{media.length}</Link>
-                <span>Media</span>
+              <div className="at-glance-item">
+                <ImageIcon size={18} />
+                <div>
+                  <Link href="/admin/media">{media.length}</Link>
+                  <span>Media</span>
+                </div>
               </div>
-              <div>
-                <Link href="/admin/gallery">{gallery.length}</Link>
-                <span>Gallery</span>
+              <div className="at-glance-item">
+                <Images size={18} />
+                <div>
+                  <Link href="/admin/gallery">{gallery.length}</Link>
+                  <span>Gallery</span>
+                </div>
               </div>
-              <div>
-                <Link href="/admin/messages">{unread}</Link>
-                <span>Unread</span>
+              <div className="at-glance-item">
+                <Mail size={18} />
+                <div>
+                  <Link href="/admin/messages">{unread}</Link>
+                  <span>Unread</span>
+                </div>
               </div>
-              <div>
-                <Link href="/admin/users">{users.length}</Link>
-                <span>Users</span>
+              <div className="at-glance-item">
+                <Users size={18} />
+                <div>
+                  <Link href="/admin/users">{users.length}</Link>
+                  <span>Users</span>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </DashboardWidget>
 
-        <section className="wp-widget">
-          <h2>Activity</h2>
-          <div className="wp-widget-body">
+          <DashboardWidget title="Quick Draft">
+            <form className="quick-draft" action={quickDraft}>
+              <label className="screen-reader-text" htmlFor="draft-title">
+                Title
+              </label>
+              <input id="draft-title" name="title" type="text" placeholder="Title" required />
+              <label className="screen-reader-text" htmlFor="draft-content">
+                Content
+              </label>
+              <textarea id="draft-content" name="content" placeholder="What is on your mind?" />
+              <div className="quick-draft-actions">
+                <span>Saved as a draft post.</span>
+                <button type="submit" className="wp-button wp-button-secondary">
+                  Save Draft
+                </button>
+              </div>
+            </form>
+          </DashboardWidget>
+
+          <DashboardWidget title="Latest Posts">
+            <ul className="news-list">
+              {posts.slice(0, 4).map((post) => (
+                <li key={post.id}>
+                  <Link href={`/admin/posts/${post.id}`}>{post.title}</Link>
+                  <small>
+                    {post.categories.join(", ")} · {post.date}
+                  </small>
+                </li>
+              ))}
+            </ul>
+          </DashboardWidget>
+        </div>
+
+        <div className="dashboard-column">
+          <DashboardWidget title="Activity">
             <ul className="activity-list">
               {posts.slice(0, 6).map((post) => (
                 <li key={post.id}>
@@ -89,38 +142,9 @@ export default async function AdminHomePage() {
                 </li>
               ))}
             </ul>
-          </div>
-        </section>
+          </DashboardWidget>
 
-        <section className="wp-widget">
-          <h2>Quick Draft</h2>
-          <div className="wp-widget-body">
-            <form className="quick-draft" action={quickDraft}>
-              <label className="screen-reader-text" htmlFor="draft-title">
-                Title
-              </label>
-              <input id="draft-title" name="title" type="text" placeholder="Title" required />
-              <label className="screen-reader-text" htmlFor="draft-content">
-                Content
-              </label>
-              <textarea
-                id="draft-content"
-                name="content"
-                placeholder="What is on your mind?"
-              />
-              <div className="quick-draft-actions">
-                <span>Saved as a draft post.</span>
-                <button type="submit" className="wp-button wp-button-secondary">
-                  Save Draft
-                </button>
-              </div>
-            </form>
-          </div>
-        </section>
-
-        <section className="wp-widget">
-          <h2>Site Health Status</h2>
-          <div className="wp-widget-body">
+          <DashboardWidget title="Site Health Status">
             <ul className="health-list">
               <li>
                 <span>HTTPS connection</span>
@@ -139,28 +163,9 @@ export default async function AdminHomePage() {
                 <span className="health-value">Good</span>
               </li>
             </ul>
-          </div>
-        </section>
+          </DashboardWidget>
 
-        <section className="wp-widget">
-          <h2>Latest Posts</h2>
-          <div className="wp-widget-body">
-            <ul className="news-list">
-              {posts.slice(0, 4).map((post) => (
-                <li key={post.id}>
-                  <Link href={`/admin/posts/${post.id}`}>{post.title}</Link>
-                  <small>
-                    {post.categories.join(", ")} · {post.date}
-                  </small>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        <section className="wp-widget">
-          <h2>Recent Messages</h2>
-          <div className="wp-widget-body">
+          <DashboardWidget title="Recent Messages">
             <ul className="news-list">
               {messages.slice(0, 4).map((message) => (
                 <li key={message.id}>
@@ -174,8 +179,8 @@ export default async function AdminHomePage() {
                 </li>
               ))}
             </ul>
-          </div>
-        </section>
+          </DashboardWidget>
+        </div>
       </div>
     </>
   );

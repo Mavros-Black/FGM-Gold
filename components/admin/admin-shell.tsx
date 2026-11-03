@@ -5,8 +5,11 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   ChevronDown,
+  ChevronsLeft,
+  CircleHelp,
   ExternalLink,
   FileText,
+  Gem,
   Images,
   Image as ImageIcon,
   LayoutDashboard,
@@ -15,6 +18,7 @@ import {
   Pin,
   Plus,
   Settings,
+  Settings2,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -87,6 +91,8 @@ export function AdminShell({
 }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+  const [screenPanel, setScreenPanel] = useState<"options" | "help" | null>(null);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(
       menu
@@ -110,11 +116,16 @@ export function AdminShell({
   }, [pathname]);
 
   function toggleGroup(label: string) {
+    if (collapsed) {
+      setCollapsed(false);
+      setOpenGroups((current) => ({ ...current, [label]: true }));
+      return;
+    }
     setOpenGroups((current) => ({ ...current, [label]: !current[label] }));
   }
 
   return (
-    <div className="admin-body">
+    <div className={collapsed ? "admin-body is-collapsed" : "admin-body"}>
       <div className="admin-bar">
         <button
           type="button"
@@ -126,8 +137,8 @@ export function AdminShell({
           <PanelLeft size={19} />
         </button>
         <Link href="/admin" className="admin-bar-brand">
-          <span className="bar-mark">⋀⋀</span>
-          <span>FGM Admin</span>
+          <Gem size={18} className="bar-mark-icon" />
+          <span>FGM Resources</span>
         </Link>
         <nav className="admin-bar-nav" aria-label="Admin shortcuts">
           <Link href="/" target="_blank" className="admin-bar-link is-visit">
@@ -169,9 +180,10 @@ export function AdminShell({
                     }
                     aria-expanded={open}
                     onClick={() => toggleGroup(item.label)}
+                    title={item.label}
                   >
                     <Icon className="menu-icon" />
-                    <span>{item.label}</span>
+                    <span className="menu-label">{item.label}</span>
                     <ChevronDown className="menu-chevron" />
                   </button>
                   <ul
@@ -205,9 +217,10 @@ export function AdminShell({
                   className={
                     active ? "admin-menu-link is-active" : "admin-menu-link"
                   }
+                  title={item.label}
                 >
                   <Icon className="menu-icon" />
-                  <span>{item.label}</span>
+                  <span className="menu-label">{item.label}</span>
                   {badge ? <span className="menu-badge">{badge}</span> : null}
                 </Link>
               </li>
@@ -221,15 +234,81 @@ export function AdminShell({
             </Link>
           </li>
         </ul>
-        <div className="admin-menu-footer">
-          FGM Resources
-          <br />
-          Ghana Limited
-        </div>
+        <button
+          type="button"
+          className="collapse-menu"
+          onClick={() => setCollapsed((value) => !value)}
+          aria-expanded={!collapsed}
+        >
+          <ChevronsLeft size={18} />
+          <span>{collapsed ? "Expand menu" : "Collapse menu"}</span>
+        </button>
       </aside>
 
       <div className="admin-frame">
         <div className="admin-content">
+          <div className="screen-meta-links">
+            <button
+              type="button"
+              className="screen-meta-tab"
+              aria-expanded={screenPanel === "options"}
+              onClick={() =>
+                setScreenPanel((current) => (current === "options" ? null : "options"))
+              }
+            >
+              <Settings2 size={13} /> Screen Options
+            </button>
+            <button
+              type="button"
+              className="screen-meta-tab"
+              aria-expanded={screenPanel === "help"}
+              onClick={() =>
+                setScreenPanel((current) => (current === "help" ? null : "help"))
+              }
+            >
+              <CircleHelp size={13} /> Help
+            </button>
+          </div>
+
+          {screenPanel === "options" ? (
+            <div className="screen-meta-panel">
+              <h3>Columns</h3>
+              <div className="screen-meta-columns">
+                {["Author", "Categories", "Comments", "Date", "Status"].map((column) => (
+                  <label key={column}>
+                    <input type="checkbox" defaultChecked />
+                    <span>{column}</span>
+                  </label>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="wp-button wp-button-secondary"
+                onClick={() => setScreenPanel(null)}
+              >
+                Apply
+              </button>
+            </div>
+          ) : null}
+
+          {screenPanel === "help" ? (
+            <div className="screen-meta-panel">
+              <h3>Help</h3>
+              <p>
+                Use the sidebar to manage posts, pages, media, gallery items and website
+                enquiries. Changes are saved to the content store and reflected across the
+                console.
+              </p>
+              <button
+                type="button"
+                className="wp-button wp-button-secondary"
+                onClick={() => setScreenPanel(null)}
+              >
+                Close
+              </button>
+            </div>
+          ) : null}
+
           <div className="wrap">{children}</div>
           <div className="wrap">
             <footer className="admin-footer">
